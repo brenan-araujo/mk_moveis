@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Estoque — MK Móveis · PIM II UNIP</title>
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ================= SPRITE DE ÍCONES MINIMALISTAS ================= -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-cube" viewBox="0 0 24 24">
+      <path d="M12 2.5 20.5 7.3v9.4L12 21.5 3.5 16.7V7.3L12 2.5Z"/>
+      <path d="M3.5 7.3 12 12l8.5-4.7M12 12v9.5"/>
+    </symbol>
+    <symbol id="i-sheet" viewBox="0 0 24 24">
+      <rect x="3.5" y="4" width="17" height="16" rx="2.5"/>
+      <path d="M3.5 9.5h17M9.5 9.5V20M15 14h2.5M15 17h2.5"/>
+    </symbol>
+    <symbol id="i-diff" viewBox="0 0 24 24">
+      <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="6.5"/>
+      <path d="m16 16 4.5 4.5M8.5 11h5"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="M12 3.5 21.5 19.5a1.2 1.2 0 0 1-1 1.8H3.5a1.2 1.2 0 0 1-1-1.8L12 3.5Z"/>
+      <path d="M12 10v4.5M12 17.5h.01"/>
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24">
+      <path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21Z"/>
+      <circle cx="12" cy="9.5" r="2.5"/>
+    </symbol>
+    <symbol id="i-target" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.5"/>
+      <circle cx="12" cy="12" r="4.5"/>
+      <circle cx="12" cy="12" r="1.2" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-kanban" viewBox="0 0 24 24">
+      <rect x="3.5" y="4" width="4.5" height="15" rx="1.4"/>
+      <rect x="9.75" y="4" width="4.5" height="10" rx="1.4"/>
+      <rect x="16" y="4" width="4.5" height="13" rx="1.4"/>
+    </symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24">
+      <rect x="9" y="3.5" width="6" height="11" rx="3"/>
+      <path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v3M8.5 20.5h7"/>
+    </symbol>
+    <symbol id="i-db" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/>
+      <path d="M4.5 5.5v6c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8v-6"/>
+      <path d="M4.5 11.5v6c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8v-6"/>
+    </symbol>
+    <symbol id="i-in" viewBox="0 0 24 24">
+      <path d="M12 3.5v12m0 0-4.5-4.5M12 15.5l4.5-4.5"/>
+      <path d="M4 17.5v1.5a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5v-1.5"/>
+    </symbol>
+    <symbol id="i-out" viewBox="0 0 24 24">
+      <path d="M12 15.5v-12m0 0-4.5 4.5M12 3.5l4.5 4.5"/>
+      <path d="M4 17.5v1.5a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5v-1.5"/>
+    </symbol>
+    <symbol id="i-window" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="16" rx="2.5"/>
+      <path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>
+    </symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24">
+      <rect x="6.5" y="6.5" width="11" height="11" rx="2"/>
+      <rect x="9.5" y="9.5" width="5" height="5" rx=".8"/>
+      <path d="M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3M3.5 9.5h3M3.5 14.5h3M17.5 9.5h3M17.5 14.5h3"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="m5 12.5 4.5 4.5L19 7.5"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/>
+    </symbol>
+    <symbol id="i-hub" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <circle cx="12" cy="4" r="1.8"/><circle cx="19.5" cy="16.5" r="1.8"/><circle cx="4.5" cy="16.5" r="1.8"/>
+      <path d="M12 9V5.8M14.6 13.5l3.3 1.9M9.4 13.5l-3.3 1.9"/>
+    </symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24">
+      <path d="M6.8 18.5h10.7a4.2 4.2 0 0 0 .6-8.35A6 6 0 0 0 6.3 8.9 4.8 4.8 0 0 0 6.8 18.5Z"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 3 19.5 6v5.6c0 4.6-3.1 7.9-7.5 9.4-4.4-1.5-7.5-4.8-7.5-9.4V6L12 3Z"/>
+      <path d="m9 12.2 2.1 2.1 4.2-4.2"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"/>
+      <circle cx="12" cy="12" r="2.8"/>
+    </symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24">
+      <path d="M12 20.2s-7.5-4.7-7.5-10.2a4.3 4.3 0 0 1 7.5-2.8 4.3 4.3 0 0 1 7.5 2.8c0 5.5-7.5 10.2-7.5 10.2Z"/>
+    </symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24">
+      <path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12l1-8Z"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M4.5 12h15m0 0-5.5-5.5M19.5 12 14 17.5"/>
+    </symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24">
+      <path d="M4 19.5h16M7.5 16v-5M12 16V7.5M16.5 16v-8"/>
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24">
+      <path d="M6.5 16.5h11l-1.3-2V10a4.2 4.2 0 0 0-8.4 0v4.5l-1.3 2ZM10 19a2 2 0 0 0 4 0"/>
+    </symbol>
+    <symbol id="i-barcode" viewBox="0 0 24 24">
+      <path d="M4 5.5v13M7.5 5.5v13M10.5 5.5v13M14 5.5v13M17 5.5v13M20 5.5v13"/>
+    </symbol>
+    <symbol id="i-link" viewBox="0 0 24 24">
+      <path d="M9.5 14.5 14.5 9.5M8 16l-1.5 1.5a3.5 3.5 0 0 1-5-5L4 10a3.5 3.5 0 0 1 5 0M16 8l1.5-1.5a3.5 3.5 0 0 1 5 5L20 14a3.5 3.5 0 0 1-5 0"/>
+    </symbol>
+    <symbol id="i-full" viewBox="0 0 24 24">
+      <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+    </symbol>
+  </svg>
+
+  <!-- ================= FUNDO CINEMATOGRÁFICO ================= -->
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1" id="b1"></div>
+    <div class="blob b2" id="b2"></div>
+    <div class="blob b3" id="b3"></div>
+    <div class="grid"></div>
+    <div class="vignette"></div>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- ================= PALCO 1920×1080 ================= -->
+  <main class="stage" id="stage">
+
+    <!-- Topo fixo -->
+    <header class="chrome-top">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 36 36" fill="none">
+          <path d="M18 3 32 11v14L18 33 4 25V11L18 3Z" stroke="currentColor" stroke-width="2.2"/>
+          <path d="M4 11 18 19l14-8M18 19v14" stroke="currentColor" stroke-width="2.2"/>
+        </svg>
+        <span>MK Móveis</span>
+        <span class="sep"></span>
+        <span class="muted">Controle de Estoque</span>
+      </div>
+      <div class="meta-top"><b>UNIP</b> · Análise e Desenvolvimento de Sistemas · PIM II · 2026</div>
+    </header>
+
+    <!-- =================================================================
+         SLIDE 01 · CAPA
+         ================================================================= -->
+    <section class="slide s-cover active" data-title="Capa">
+      <div class="cover-left">
+        <div class="chips rv" style="--i:0">
+          <span class="chip chip-solid">PIM II · 2026</span>
+          <span class="chip">Análise e Desenvolvimento de Sistemas · UNIP</span>
+        </div>
+
+        <p class="pre rv" style="--i:1">Solução Computacional para</p>
+        <h1 class="hero-title">
+          <span class="ln" style="--i:2"><span>Controle de</span></span>
+          <span class="ln" style="--i:3"><span class="grad">Estoque.</span></span>
+        </h1>
+
+        <p class="lead rv" style="--i:4">
+          Transformação digital do fluxo de entradas, saídas e saldos na
+          <strong>MK Móveis de Escritórios e Planejados</strong> — Brasília/DF.
+        </p>
+
+        <div class="cover-meta rv" style="--i:5">
+          <div class="full">
+            <span class="k">Equipe</span>
+            <span class="v">Brenan Araújo · Isther Santos · Luiz Fernando Silva · Miquéias Gomes · Salomão Neves</span>
+          </div>
+          <div>
+            <span class="k">Orientador</span>
+            <span class="v">Prof. Esp. Cristiano de Sousa Silva</span>
+          </div>
+          <div>
+            <span class="k">Tecnologias</span>
+            <span class="v">Linguagem C · SQL (3FN) · Kanban</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escultura isométrica de estoque -->
+      <div class="cover-visual rv-scale" style="--i:3" aria-hidden="true">
+        <div class="halo"></div>
+
+        <div class="glass fchip" style="top:96px; left:24px;">
+          <div class="dot-ic"><svg class="ic"><use href="#i-bolt"/></svg></div>
+          <div>
+            <b>Saldo em Tempo Real</b>
+            <small>RNF01 · resposta ≤ 2 s</small>
+          </div>
+        </div>
+
+        <div class="glass fchip f2" style="bottom:110px; right:10px;">
+          <div class="dot-ic"><svg class="ic"><use href="#i-shield"/></svg></div>
+          <div>
+            <b>Zero Estoque Negativo</b>
+            <small>RN01 · validação automática</small>
+          </div>
+        </div>
+
+        <svg class="cubes" viewBox="-360 -260 720 640">
+          <defs>
+            <linearGradient id="cTop" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#00D4FF" stop-opacity=".42"/>
+              <stop offset="100%" stop-color="#2F6BFF" stop-opacity=".14"/>
+            </linearGradient>
+            <linearGradient id="cLeft" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#15325E" stop-opacity=".92"/>
+              <stop offset="100%" stop-color="#0A1628" stop-opacity=".96"/>
+            </linearGradient>
+            <linearGradient id="cRight" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0D2244" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#060E1C" stop-opacity=".98"/>
+            </linearGradient>
+            <linearGradient id="cHiTop" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#9CF2FF"/>
+              <stop offset="100%" stop-color="#00D4FF"/>
+            </linearGradient>
+            <g id="iso">
+              <polygon points="0,-58 100,0 0,58 -100,0" fill="url(#cTop)" stroke="#00D4FF" stroke-opacity=".55" stroke-width="1.5"/>
+              <polygon points="-100,0 0,58 0,174 -100,116" fill="url(#cLeft)" stroke="#00D4FF" stroke-opacity=".35" stroke-width="1.5"/>
+              <polygon points="100,0 0,58 0,174 100,116" fill="url(#cRight)" stroke="#00D4FF" stroke-opacity=".45" stroke-width="1.5"/>
+            </g>
+            <g id="isoHi" class="cube-hi">
+              <polygon points="0,-58 100,0 0,58 -100,0" fill="url(#cHiTop)" stroke="#FFFFFF" stroke-width="2"/>
+              <polygon points="-100,0 0,58 0,174 -100,116" fill="#0095CC" fill-opacity=".75" stroke="#7FE9FF" stroke-width="1.8" class="edge"/>
+              <polygon points="100,0 0,58 0,174 100,116" fill="#006699" fill-opacity=".85" stroke="#7FE9FF" stroke-width="1.8" class="edge"/>
+            </g>
+          </defs>
+
+          <!-- Anéis orbitais -->
+          <ellipse class="spin-ring" cx="0" cy="185" rx="300" ry="118" fill="none" stroke="#00D4FF" stroke-opacity=".26" stroke-width="1.5" stroke-dasharray="10 14"/>
+          <ellipse cx="0" cy="185" rx="235" ry="90" fill="none" stroke="#2F6BFF" stroke-opacity=".22" stroke-width="1.2"/>
+
+          <!-- Pilha isométrica -->
+          <g class="float">
+            <use href="#iso" transform="translate(-105, 70)"/>
+            <use href="#iso" transform="translate(105, 70)"/>
+            <use href="#iso" transform="translate(0, 130)"/>
+            <use href="#iso" transform="translate(0, -45)"/>
+            <use href="#isoHi" transform="translate(0, -165)"/>
+          </g>
+
+          <!-- Cubos satélites -->
+          <g class="mini-cube" transform="translate(-235, -90) scale(.36)"><use href="#isoHi"/></g>
+          <g class="mini-cube d2" transform="translate(240, -60) scale(.32)"><use href="#iso"/></g>
+          <g class="mini-cube d3" transform="translate(215, 195) scale(.28)"><use href="#isoHi"/></g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 02 · O PROBLEMA
+         ================================================================= -->
+    <section class="slide s-problem" data-title="O Problema">
+      <div class="ghost">02</div>
+      <div class="eyebrow rv" style="--i:0"><b>02</b><i></i><span>Diagnóstico Operacional</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>O gargalo do <em class="grad">controle manual.</em></span></span>
+      </h2>
+      <p class="lead rv" style="--i:2">
+        O crescimento comercial expôs o limite das planilhas soltas e anotações em papel na rotina da loja.
+      </p>
+
+      <div class="grid-4">
+        <article class="glass card rv" style="--i:3">
+          <div class="icon-wrap"><svg class="ic"><use href="#i-sheet"/></svg></div>
+          <h3>Dados Dispersos</h3>
+          <p>Controle fragmentado entre Excel, papel e conferência visual.</p>
+        </article>
+        <article class="glass card rv" style="--i:4">
+          <div class="icon-wrap"><svg class="ic"><use href="#i-diff"/></svg></div>
+          <h3>Saldo Divergente</h3>
+          <p>Diferença recorrente entre o estoque registrado e o físico.</p>
+        </article>
+        <article class="glass card rv" style="--i:5">
+          <div class="icon-wrap"><svg class="ic"><use href="#i-search"/></svg></div>
+          <h3>Busca Lenta</h3>
+          <p>Demora para localizar peças e confirmar disponibilidade.</p>
+        </article>
+        <article class="glass card rv" style="--i:6">
+          <div class="icon-wrap"><svg class="ic"><use href="#i-alert"/></svg></div>
+          <h3>Risco Comercial</h3>
+          <p>Retrabalho diário e perda de oportunidades de venda.</p>
+        </article>
+      </div>
+
+      <div class="glass hl question rv" style="--i:7">
+        <span class="label">Questão de<br>Pesquisa</span>
+        <p>Como tornar o registro de entradas, saídas e saldos da MK Móveis <strong>rápido, organizado e confiável?</strong></p>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 03 · A EMPRESA
+         ================================================================= -->
+    <section class="slide s-company" data-title="A Empresa">
+      <div class="ghost">03</div>
+      <div class="split">
+        <div>
+          <div class="eyebrow rv" style="--i:0"><b>03</b><i></i><span>Estudo de Caso Real</span></div>
+          <h2 class="title xl">
+            <span class="ln" style="--i:1"><span>MK <em class="grad">Móveis.</em></span></span>
+          </h2>
+          <p class="subtitle rv" style="--i:2">Escritórios, Planejados &amp; Persianas</p>
+          <p class="lead rv" style="--i:3">
+            Empresa familiar na <strong>Asa Norte (SHCGN 708)</strong>, especializada em mobiliário corporativo e manutenção de cadeiras.
+          </p>
+
+          <div class="stats">
+            <div class="glass stat rv" style="--i:4">
+              <b data-count="2010">2010</b>
+              <span>Fundação em Brasília · DF</span>
+            </div>
+            <div class="glass stat rv" style="--i:5">
+              <b data-count="8">8</b>
+              <span>Colaboradores na operação</span>
+            </div>
+            <div class="glass stat rv" style="--i:6">
+              <b>B2B + B2C</b>
+              <span>Empresas e escritórios locais</span>
+            </div>
+            <div class="glass stat rv" style="--i:7">
+              <b>Asa Norte</b>
+              <span>SHCGN 708 · Bloco B · Loja 27</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="photo-stage rv-right" style="--i:3">
+          <figure class="photo-frame">
+            <img src="assets/visita-mk.jpg" alt="Visita técnica da equipe à MK Móveis em Brasília">
+            <figcaption>
+              <svg class="ic"><use href="#i-pin"/></svg>
+              <span>Visita Técnica · Outubro 2026</span>
+              <small>Brasília/DF</small>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 04 · OBJETIVOS
+         ================================================================= -->
+    <section class="slide s-obj" data-title="Objetivos">
+      <div class="ghost">04</div>
+      <div class="eyebrow rv" style="--i:0"><b>04</b><i></i><span>Direcionamento do Projeto</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Objetivos da <em class="grad">solução.</em></span></span>
+      </h2>
+
+      <div class="obj-layout">
+        <article class="glass hl obj-main rv-left" style="--i:2">
+          <div class="icon-wrap lg"><svg class="ic"><use href="#i-target"/></svg></div>
+          <span class="label">Objetivo Geral</span>
+          <p class="big">
+            Automatizar o controle de estoque da <strong>MK Móveis</strong>, estruturando o fluxo de entradas e saídas para eliminar divergências.
+          </p>
+          <p class="sub">Foco em rastreabilidade, precisão de saldo e prevenção ao desabastecimento.</p>
+        </article>
+
+        <div class="obj-grid">
+          <article class="glass obj rv" style="--i:3">
+            <span class="letter">A</span>
+            <div>
+              <h3>Sistematizar o Estoque</h3>
+              <p>Substituir controles manuais por saldo preciso em tempo real.</p>
+            </div>
+          </article>
+          <article class="glass obj rv" style="--i:4">
+            <span class="letter">B</span>
+            <div>
+              <h3>Perfis de Acesso</h3>
+              <p>Autonomia e segurança para sócios, administrativo e vendas.</p>
+            </div>
+          </article>
+          <article class="glass obj rv" style="--i:5">
+            <span class="letter">C</span>
+            <div>
+              <h3>Registro Digital</h3>
+              <p>Lançamento ágil apoiado nas notas fiscais e pedidos.</p>
+            </div>
+          </article>
+          <article class="glass obj rv" style="--i:6">
+            <span class="letter">D</span>
+            <div>
+              <h3>Consulta Imediata</h3>
+              <p>Histórico completo e disponibilidade instantânea para vendas.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 05 · METODOLOGIA
+         ================================================================= -->
+    <section class="slide s-method" data-title="Metodologia">
+      <div class="ghost">05</div>
+      <div class="eyebrow rv" style="--i:0"><b>05</b><i></i><span>Pesquisa Aplicada &amp; Gestão Ágil</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Do campo ao <em class="grad">fluxo Kanban.</em></span></span>
+      </h2>
+
+      <div class="method">
+        <div class="method-cards">
+          <article class="glass mcard rv-left" style="--i:2">
+            <div class="mc-head">
+              <div class="icon-wrap"><svg class="ic"><use href="#i-kanban"/></svg></div>
+              <div>
+                <h3>Kanban no Trello</h3>
+                <p>Gestão visual, limite de WIP e revisão cruzada entre os 5 integrantes.</p>
+              </div>
+            </div>
+            <div class="flow-chips">
+              <span>Backlog</span><i>→</i>
+              <span>A Fazer</span><i>→</i>
+              <span>Andamento</span><i>→</i>
+              <span>Revisão</span><i>→</i>
+              <span>Concluído</span>
+            </div>
+          </article>
+
+          <article class="glass mcard rv-left" style="--i:3">
+            <div class="mc-head">
+              <div class="icon-wrap"><svg class="ic"><use href="#i-mic"/></svg></div>
+              <div>
+                <h3>Entrevista Presencial</h3>
+                <p>Coleta em 03/10/2026 com o sócio fundador Elias Marcos Moreira Gomes.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Pesquisa Aplicada</span>
+              <span class="tag">Estudo de Caso</span>
+              <span class="tag">9 Questões Estruturadas</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="screen-stage rv-right" style="--i:4">
+          <div class="screen">
+            <div class="screen-bar">
+              <i></i><i></i><i></i>
+              <span>trello.com · Quadro Kanban PIM II</span>
+            </div>
+            <img src="assets/kanban-trello.png" alt="Quadro Kanban do grupo no Trello">
+          </div>
+          <div class="caption">
+            <svg class="ic"><use href="#i-kanban"/></svg>
+            <span>Apêndice B · Quadro real utilizado pela equipe durante o desenvolvimento</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 06 · ENGENHARIA DE SOFTWARE
+         ================================================================= -->
+    <section class="slide s-eng" data-title="Engenharia de Software">
+      <div class="ghost">06</div>
+      <div class="eyebrow rv" style="--i:0"><b>06</b><i></i><span>Engenharia de Software Ágil</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Requisitos &amp; <em class="grad">Casos de Uso.</em></span></span>
+      </h2>
+
+      <div class="req-layout">
+        <div class="req-list">
+          <article class="glass req rv-left" style="--i:2">
+            <span class="big" data-count="11">11</span>
+            <div>
+              <span class="tag-k">RF · Requisitos Funcionais</span>
+              <p>Cadastrar item · Registrar entrada e saída · Consultar saldo · Estornar</p>
+            </div>
+          </article>
+
+          <article class="glass req rv-left" style="--i:3">
+            <span class="big" data-count="7">7</span>
+            <div>
+              <span class="tag-k">RNF · Requisitos Não Funcionais</span>
+              <p>Resposta ≤ 2 s · Treino ≤ 30 min · SLA ≥ 99% · Backup diário · Senha hash</p>
+            </div>
+          </article>
+
+          <article class="glass req rv-left" style="--i:4">
+            <span class="big" data-count="6">6</span>
+            <div>
+              <span class="tag-k">RN · Regras de Negócio</span>
+              <p>Proíbe saldo negativo · Código único · Inativação sem exclusão · Estorno auditável</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- Diagrama UML de Casos de Uso -->
+        <div class="glass usecase rv-right" style="--i:3">
+          <span class="label">Diagrama UML · Casos de Uso</span>
+          <svg viewBox="0 0 580 510">
+            <rect class="uc-box" x="195" y="18" width="365" height="474" rx="22"/>
+            <text class="uc-sys" x="378" y="48">SISTEMA DE ESTOQUE · MK</text>
+
+            <!-- Linhas ator -> casos -->
+            <path class="uc-line draw" pathLength="1" style="--i:4" d="M115 240 L238 98"/>
+            <path class="uc-line draw" pathLength="1" style="--i:5" d="M115 240 L238 178"/>
+            <path class="uc-line draw" pathLength="1" style="--i:6" d="M115 240 L238 258"/>
+            <path class="uc-line draw" pathLength="1" style="--i:7" d="M115 240 L238 338"/>
+            <path class="uc-line draw" pathLength="1" style="--i:8" d="M115 240 L238 418"/>
+
+            <!-- Ator -->
+            <g class="pop" style="--i:3">
+              <circle class="uc-actor" cx="78" cy="195" r="22"/>
+              <path class="uc-actor" d="M78 217v58M44 236h68M78 275l-28 44M78 275l28 44"/>
+              <text class="uc-actor-lbl" x="78" y="352">Operador MK</text>
+            </g>
+
+            <!-- Elipses de caso de uso -->
+            <g class="pop" style="--i:4">
+              <ellipse class="uc-ell" cx="378" cy="98" rx="142" ry="30"/>
+              <text class="uc-txt" x="378" y="98">Cadastrar Produto</text>
+            </g>
+            <g class="pop" style="--i:5">
+              <ellipse class="uc-ell" cx="378" cy="178" rx="142" ry="30"/>
+              <text class="uc-txt" x="378" y="178">Registrar Entrada</text>
+            </g>
+            <g class="pop" style="--i:6">
+              <ellipse class="uc-ell" cx="378" cy="258" rx="142" ry="30"/>
+              <text class="uc-txt" x="378" y="258">Registrar Saída</text>
+            </g>
+            <g class="pop" style="--i:7">
+              <ellipse class="uc-ell" cx="378" cy="338" rx="142" ry="30"/>
+              <text class="uc-txt" x="378" y="338">Consultar Saldo</text>
+            </g>
+            <g class="pop" style="--i:8">
+              <ellipse class="uc-ell" cx="378" cy="418" rx="142" ry="30"/>
+              <text class="uc-txt" x="378" y="418">Listar Histórico</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 07 · BANCO DE DADOS (DER)
+         ================================================================= -->
+    <section class="slide s-db" data-title="Banco de Dados">
+      <div class="ghost">07</div>
+      <div class="eyebrow rv" style="--i:0"><b>07</b><i></i><span>Modelagem Relacional · 3ª Forma Normal</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>4 entidades &amp; <em class="grad">DER visual.</em></span></span>
+      </h2>
+
+      <div class="der">
+        <!-- Conexões SVG entre tabelas -->
+        <svg class="links" viewBox="0 0 1680 560">
+          <!-- Produto (1) -> (1) Estoque -->
+          <path class="link draw" pathLength="1" style="--i:3" d="M 380 120 L 630 120"/>
+          <path class="link-flow" pathLength="1" d="M 380 120 L 630 120"/>
+          <g class="card-badge pop" style="--i:4"><circle cx="412" cy="120" r="16"/><text x="412" y="120">1</text></g>
+          <g class="card-badge pop" style="--i:4"><circle cx="598" cy="120" r="16"/><text x="598" y="120">1</text></g>
+
+          <!-- Estoque (1) -> (N) Entrada -->
+          <path class="link draw" pathLength="1" style="--i:5" d="M 630 82 L 505 82 L 505 405 L 560 405"/>
+          <path class="link-flow" pathLength="1" d="M 630 82 L 505 82 L 505 405 L 560 405"/>
+          <g class="card-badge pop" style="--i:6"><circle cx="598" cy="82" r="16"/><text x="598" y="82">1</text></g>
+          <g class="card-badge pop" style="--i:6"><circle cx="532" cy="405" r="16"/><text x="532" y="405">N</text></g>
+
+          <!-- Estoque (1) -> (N) Saída -->
+          <path class="link draw" pathLength="1" style="--i:7" d="M 990 82 L 1385 82 L 1385 405 L 1330 405"/>
+          <path class="link-flow" pathLength="1" d="M 990 82 L 1385 82 L 1385 405 L 1330 405"/>
+          <g class="card-badge pop" style="--i:8"><circle cx="1022" cy="82" r="16"/><text x="1022" y="82">1</text></g>
+          <g class="card-badge pop" style="--i:8"><circle cx="1358" cy="405" r="16"/><text x="1358" y="405">N</text></g>
+        </svg>
+
+        <!-- PRODUTO -->
+        <article class="glass ent rv-scale" style="--i:2; left:0; top:10px; width:380px;">
+          <header><svg class="ic"><use href="#i-cube"/></svg><span>produto</span></header>
+          <ul>
+            <li><span class="pk">PK</span>codprod<em>INT</em></li>
+            <li>nome<em>VARCHAR(100)</em></li>
+            <li>descricao<em>TEXT</em></li>
+            <li>preco_unitario<em>DECIMAL(10,2)</em></li>
+            <li>fornecedor<em>INT</em></li>
+          </ul>
+        </article>
+
+        <!-- ESTOQUE -->
+        <article class="glass hl ent rv-scale" style="--i:3; left:630px; top:10px; width:360px;">
+          <header><svg class="ic"><use href="#i-db"/></svg><span>estoque</span></header>
+          <ul>
+            <li><span class="pk">PK</span>codest<em>INT</em></li>
+            <li><span class="fk">FK</span>codprod<em>INT</em></li>
+            <li>qtest<em>INT DEFAULT 0</em></li>
+          </ul>
+        </article>
+
+        <!-- ENTRADA -->
+        <article class="glass ent rv-scale" style="--i:5; left:560px; top:275px; width:360px;">
+          <header><svg class="ic"><use href="#i-in"/></svg><span>entrada</span></header>
+          <ul>
+            <li><span class="pk">PK</span>ident<em>INT</em></li>
+            <li><span class="fk">FK</span>codest<em>INT</em></li>
+            <li>qtent<em>INT NOT NULL</em></li>
+            <li>data<em>DATE</em></li>
+          </ul>
+        </article>
+
+        <!-- SAÍDA -->
+        <article class="glass ent rv-scale" style="--i:6; left:970px; top:275px; width:360px;">
+          <header><svg class="ic"><use href="#i-out"/></svg><span>saida</span></header>
+          <ul>
+            <li><span class="pk">PK</span>idsaid<em>INT</em></li>
+            <li><span class="fk">FK</span>codest<em>INT</em></li>
+            <li>qtsaid<em>INT NOT NULL</em></li>
+            <li>data<em>DATE</em></li>
+          </ul>
+        </article>
+
+        <!-- SQL Card -->
+        <div class="glass code rv-right" style="--i:4; left:1090px; top:10px; width:590px;">
+          <span class="label">Consulta SQL · Saldo Atual</span>
+          <pre><span class="kw">SELECT</span> p.nome, e.qtest
+<span class="kw">FROM</span>   produto p
+<span class="kw">JOIN</span>   estoque e <span class="kw">ON</span> p.codprod = e.codprod;</pre>
+        </div>
+
+        <!-- Badges -->
+        <div class="chips rv" style="--i:7">
+          <span class="chip chip-solid">Normalizado em 3FN</span>
+          <span class="chip">Integridade Referencial PK / FK</span>
+          <span class="chip">MySQL Relacional</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 08 · ARQUITETURA DO SISTEMA
+         ================================================================= -->
+    <section class="slide s-arch" data-title="Arquitetura">
+      <div class="ghost">08</div>
+      <div class="eyebrow rv" style="--i:0"><b>08</b><i></i><span>Arquitetura Modular &amp; Linguagem C</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Sistema em <em class="grad">3 camadas.</em></span></span>
+      </h2>
+
+      <div class="arch-layout">
+        <div class="layers">
+          <article class="glass layer rv-left" style="--i:2">
+            <div class="icon-wrap"><svg class="ic"><use href="#i-window"/></svg></div>
+            <div>
+              <h3>01 · Camada de Interface</h3>
+              <p>Menus interativos, leitura de entradas e mensagens claras de validação.</p>
+            </div>
+            <span class="layer-tag">Interação Humana</span>
+          </article>
+
+          <div class="connector rv" style="--i:3"></div>
+
+          <article class="glass hl layer rv-left" style="--i:4">
+            <div class="icon-wrap"><svg class="ic"><use href="#i-cpu"/></svg></div>
+            <div>
+              <h3>02 · Camada de Lógica</h3>
+              <p>Funções modulares, <code>if/else</code>, laços e validação das Regras de Negócio.</p>
+            </div>
+            <span class="layer-tag">Programação em C</span>
+          </article>
+
+          <div class="connector rv" style="--i:5"></div>
+
+          <article class="glass layer rv-left" style="--i:6">
+            <div class="icon-wrap"><svg class="ic"><use href="#i-db"/></svg></div>
+            <div>
+              <h3>03 · Camada de Dados</h3>
+              <p>Vetores e matrizes em memória integrados ao banco relacional SQL.</p>
+            </div>
+            <span class="layer-tag">Persistência SQL</span>
+          </article>
+        </div>
+
+        <!-- Fluxo de atividade (Saída) -->
+        <aside class="glass flowcard rv-right" style="--i:5">
+          <span class="label">Fluxo Crítico · Registrar Saída</span>
+          <div class="fstep"><b>1</b><span>Informar código e quantidade</span></div>
+          <div class="fline"></div>
+          <div class="fstep"><b>2</b><span>Consultar saldo em <code>estoque</code></span></div>
+          <div class="fline"></div>
+          <div class="fdec">Saldo suficiente?</div>
+          <div class="fbranch">
+            <div class="fyes">
+              <small><svg class="ic"><use href="#i-check"/></svg> SIM</small>
+              <span>Grava saída e atualiza saldo</span>
+            </div>
+            <div class="fno">
+              <small><svg class="ic"><use href="#i-x"/></svg> NÃO · RN01</small>
+              <span>Bloqueia e exibe motivo</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 09 · REDES
+         ================================================================= -->
+    <section class="slide s-net" data-title="Redes e Nuvem">
+      <div class="ghost">09</div>
+      <div class="eyebrow rv" style="--i:0"><b>09</b><i></i><span>Redes de Computadores &amp; Sistemas Distribuídos</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Topologia <em class="grad">Estrela + Nuvem.</em></span></span>
+      </h2>
+
+      <div class="net-layout">
+        <div class="glass net rv-scale" style="--i:2">
+          <svg viewBox="0 0 1000 590">
+            <!-- Cabos -->
+            <path id="wCloud" class="wire-net" d="M 500 325 L 500 115"/>
+            <path id="wN1" class="wire draw" pathLength="1" style="--i:3" d="M 500 325 L 180 185"/>
+            <path id="wN2" class="wire draw" pathLength="1" style="--i:4" d="M 500 325 L 820 185"/>
+            <path id="wDesk" class="wire draw" pathLength="1" style="--i:5" d="M 500 325 L 500 500"/>
+
+            <!-- Pacotes de dados animados -->
+            <circle class="packet" r="5"><animateMotion dur="2.6s" repeatCount="indefinite" path="M 500 325 L 180 185"/></circle>
+            <circle class="packet" r="5"><animateMotion dur="2.2s" begin="0.6s" repeatCount="indefinite" path="M 820 185 L 500 325"/></circle>
+            <circle class="packet" r="5"><animateMotion dur="2.0s" begin="0.3s" repeatCount="indefinite" path="M 500 325 L 500 500"/></circle>
+            <circle class="packet" r="6"><animateMotion dur="2.4s" repeatCount="indefinite" path="M 500 325 L 500 115"/></circle>
+
+            <!-- Nuvem Google -->
+            <g class="pop" style="--i:3" transform="translate(500, 95)">
+              <rect class="n-bg" x="-175" y="-52" width="350" height="104" rx="52"/>
+              <text class="n-lbl" x="0" y="-4">Google Cloud</text>
+              <text class="n-sub" x="0" y="26">Gmail · Google Drive · Pedidos</text>
+            </g>
+
+            <!-- Notebook 01 -->
+            <g class="pop" style="--i:4" transform="translate(180, 185)">
+              <rect class="n-bg" x="-135" y="-50" width="270" height="100" rx="22"/>
+              <text class="n-lbl" x="0" y="-4">Notebook 01</text>
+              <text class="n-sub" x="0" y="25">Vendas &amp; Atendimento</text>
+            </g>
+
+            <!-- Notebook 02 -->
+            <g class="pop" style="--i:5" transform="translate(820, 185)">
+              <rect class="n-bg" x="-135" y="-50" width="270" height="100" rx="22"/>
+              <text class="n-lbl" x="0" y="-4">Notebook 02</text>
+              <text class="n-sub" x="0" y="25">Orçamentos &amp; Propostas</text>
+            </g>
+
+            <!-- Desktop 1TB -->
+            <g class="pop" style="--i:6" transform="translate(500, 500)">
+              <rect class="n-bg" x="-175" y="-50" width="350" height="100" rx="22"/>
+              <text class="n-lbl" x="0" y="-4">Desktop Principal · 1 TB</text>
+              <text class="n-sub" x="0" y="25">Base Local · Notas Fiscais</text>
+            </g>
+
+            <!-- Switch Central -->
+            <g class="pop" style="--i:2" transform="translate(500, 325)">
+              <circle class="n-pulse" r="68"/>
+              <circle class="n-bg core" r="68"/>
+              <text class="n-lbl" x="0" y="-2">SWITCH</text>
+              <text class="n-sub" x="0" y="24">Nó Central</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="features">
+          <article class="glass feat rv-right" style="--i:3">
+            <div class="icon-wrap sm"><svg class="ic"><use href="#i-hub"/></svg></div>
+            <div>
+              <h3>Gerência Centralizada</h3>
+              <p>Monitoramento unificado de tráfego e políticas de acesso no switch.</p>
+            </div>
+          </article>
+
+          <article class="glass feat rv-right" style="--i:4">
+            <div class="icon-wrap sm"><svg class="ic"><use href="#i-shield"/></svg></div>
+            <div>
+              <h3>Isolamento de Falhas</h3>
+              <p>A queda de uma estação não interrompe o restante da loja.</p>
+            </div>
+          </article>
+
+          <article class="glass feat rv-right" style="--i:5">
+            <div class="icon-wrap sm"><svg class="ic"><use href="#i-cloud"/></svg></div>
+            <div>
+              <h3>Arquitetura Híbrida</h3>
+              <p>Rede local rápida aliada à escalabilidade da nuvem com custo enxuto.</p>
+            </div>
+          </article>
+
+          <span class="chip rv-right" style="--i:6">Expansão Plug &amp; Play para novos terminais</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 10 · DIREITOS HUMANOS
+         ================================================================= -->
+    <section class="slide s-rights" data-title="Direitos Humanos">
+      <div class="ghost">10</div>
+      <div class="eyebrow rv" style="--i:0"><b>10</b><i></i><span>Ética, Cidadania &amp; Responsabilidade Social</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Tecnologia centrada <em class="grad">em pessoas.</em></span></span>
+      </h2>
+
+      <div class="rights">
+        <article class="glass right-card rv-left" style="--i:2">
+          <div class="rc-head">
+            <div class="icon-wrap lg"><svg class="ic"><use href="#i-shield"/></svg></div>
+            <div>
+              <h3>LGPD &amp; Privacidade</h3>
+              <small>Lei nº 13.709/2018 · CF/88 Art. 5º</small>
+            </div>
+          </div>
+          <ul class="ticks">
+            <li><svg class="ic"><use href="#i-check"/></svg><span>Senhas criptografadas e bloqueio após 5 falhas</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg><span>Permissões por perfil: sócio, administrativo e vendas</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg><span>Coleta mínima restrita à finalidade operacional</span></li>
+          </ul>
+        </article>
+
+        <article class="glass right-card rv-right" style="--i:3">
+          <div class="rc-head">
+            <div class="icon-wrap lg"><svg class="ic"><use href="#i-eye"/></svg></div>
+            <div>
+              <h3>Acessibilidade</h3>
+              <small>Estatuto da PcD · Lei nº 13.146/2015</small>
+            </div>
+          </div>
+          <ul class="ticks">
+            <li><svg class="ic"><use href="#i-check"/></svg><span>Alto contraste visual e tipografia legível</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg><span>Navegação direta: capacitação em até 30 min</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg><span>100% das recusas informam o motivo ao operador</span></li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="glass hl strip rv" style="--i:4">
+        <div class="icon-wrap sm"><svg class="ic"><use href="#i-heart"/></svg></div>
+        <p>Valorização do trabalho humano: menos retrabalho, mais autonomia para os 8 colaboradores.</p>
+        <span>CF/88 · Art. 1º · Dignidade da Pessoa Humana</span>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 11 · RESULTADOS E BENEFÍCIOS
+         ================================================================= -->
+    <section class="slide s-results" data-title="Resultados">
+      <div class="ghost">11</div>
+      <div class="eyebrow rv" style="--i:0"><b>11</b><i></i><span>Impacto Esperado &amp; Métricas Verificáveis</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Resultados &amp; <em class="grad">Benefícios.</em></span></span>
+      </h2>
+
+      <div class="metrics">
+        <article class="glass metric rv" style="--i:2">
+          <span class="m-k">RNF01 · DESEMPENHO</span>
+          <b><small>≤</small><span data-count="2">2</span><small>s</small></b>
+          <p>Consulta de saldo e itens</p>
+        </article>
+
+        <article class="glass metric rv" style="--i:3">
+          <span class="m-k">RNF02 · USABILIDADE</span>
+          <b><small>≤</small><span data-count="30">30</span><small>min</small></b>
+          <p>Treinamento operacional</p>
+        </article>
+
+        <article class="glass metric rv" style="--i:4">
+          <span class="m-k">RNF03 · DISPONIBILIDADE</span>
+          <b><small>≥</small><span data-count="99">99</span><small>%</small></b>
+          <p>Ativo no horário comercial</p>
+        </article>
+
+        <article class="glass metric rv" style="--i:5">
+          <span class="m-k">RN01 + RN06 · AUDITORIA</span>
+          <b><span data-count="100">100</span><small>%</small></b>
+          <p>Movimentações rastreáveis</p>
+        </article>
+      </div>
+
+      <div class="compare">
+        <div class="glass cmp before rv-left" style="--i:6">
+          <div class="icon-wrap"><svg class="ic"><use href="#i-sheet"/></svg></div>
+          <div>
+            <small>Antes · Controle Manual</small>
+            <p>Planilhas soltas, anotações em papel, saldo divergente e busca demorada no depósito.</p>
+          </div>
+        </div>
+
+        <div class="cmp-arrow pop" style="--i:7">
+          <svg class="ic"><use href="#i-arrow"/></svg>
+        </div>
+
+        <div class="glass hl cmp after rv-right" style="--i:8">
+          <div class="icon-wrap"><svg class="ic"><use href="#i-bolt"/></svg></div>
+          <div>
+            <small>Depois · Solução Computacional</small>
+            <p>Base centralizada, bloqueio de saldo negativo e disponibilidade imediata para vendas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SLIDE 12 · CONCLUSÃO + PRÓXIMOS PASSOS
+         ================================================================= -->
+    <section class="slide s-end" data-title="Conclusão">
+      <div class="ghost">12</div>
+      <div class="eyebrow rv" style="--i:0"><b>12</b><i></i><span>Encerramento &amp; Evolução Contínua</span></div>
+      <h2 class="title">
+        <span class="ln" style="--i:1"><span>Conclusão &amp; <em class="grad">Próximos Passos.</em></span></span>
+      </h2>
+      <p class="lead rv" style="--i:2">
+        A solução integra <strong>Programação em C, Banco de Dados, Engenharia Ágil, Redes e Direitos Humanos</strong>
+        para modernizar o estoque da MK Móveis sem substituir o sistema fiscal existente.
+      </p>
+
+      <div class="steps-head rv" style="--i:3">
+        <span class="label">Roadmap de Evolução Futura</span>
+      </div>
+
+      <div class="steps">
+        <div class="steps-track"><span></span></div>
+
+        <div class="step-col rv" style="--i:4">
+          <div class="step-dot"></div>
+          <article class="glass step">
+            <div class="step-top">
+              <span class="step-n">FASE 01</span>
+              <div class="icon-wrap sm"><svg class="ic"><use href="#i-bell"/></svg></div>
+            </div>
+            <h3>Alertas de Estoque Mínimo</h3>
+          </article>
+        </div>
+
+        <div class="step-col rv" style="--i:5">
+          <div class="step-dot"></div>
+          <article class="glass step">
+            <div class="step-top">
+              <span class="step-n">FASE 02</span>
+              <div class="icon-wrap sm"><svg class="ic"><use href="#i-barcode"/></svg></div>
+            </div>
+            <h3>Leitura por Código de Barras</h3>
+          </article>
+        </div>
+
+        <div class="step-col rv" style="--i:6">
+          <div class="step-dot"></div>
+          <article class="glass step">
+            <div class="step-top">
+              <span class="step-n">FASE 03</span>
+              <div class="icon-wrap sm"><svg class="ic"><use href="#i-chart"/></svg></div>
+            </div>
+            <h3>Relatórios Gerenciais</h3>
+          </article>
+        </div>
+
+        <div class="step-col rv" style="--i:7">
+          <div class="step-dot"></div>
+          <article class="glass step">
+            <div class="step-top">
+              <span class="step-n">FASE 04</span>
+              <div class="icon-wrap sm"><svg class="ic"><use href="#i-link"/></svg></div>
+            </div>
+            <h3>Integração com Emissor de NF-e</h3>
+          </article>
+        </div>
+      </div>
+
+      <div class="closing rv" style="--i:8">
+        <div class="thanks grad">Obrigado.</div>
+        <div class="closing-meta">
+          <div><b>UNIP · Brasília/DF · 2026</b> — Análise e Desenvolvimento de Sistemas</div>
+          <div>Brenan · Isther · Luiz Fernando · Miquéias · Salomão · Orientador: Prof. Esp. Cristiano Silva</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dica rápida de navegação -->
+    <div class="hint" id="hint">
+      Use <kbd>←</kbd> <kbd>→</kbd> <kbd>Espaço</kbd> ou <kbd>F</kbd> para tela cheia
+    </div>
+
+    <!-- Sweep luminoso entre slides -->
+    <div class="sweep" id="sweep" aria-hidden="true"></div>
+
+    <!-- Rodapé fixo -->
+    <footer class="chrome-bottom">
+      <div class="counter">
+        <b id="curNum">01</b>
+        <span>/ 12</span>
+        <em id="curTitle">Capa</em>
+      </div>
+
+      <div class="pager" id="pager" role="tablist" aria-label="Navegação de slides"></div>
+
+      <div class="nav">
+        <button id="prevBtn" type="button" title="Slide anterior (←)" aria-label="Slide anterior">←</button>
+        <button id="nextBtn" type="button" title="Próximo slide (→)" aria-label="Próximo slide">→</button>
+        <button id="fsBtn" type="button" title="Tela cheia (F)" aria-label="Alternar tela cheia">
+          <svg class="ic"><use href="#i-full"/></svg>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Barra de progresso -->
+    <div class="progress"><span id="progBar"></span></div>
+
+  </main>
+
+  <script src="deck.js"></script>
+</body>
+</html>
