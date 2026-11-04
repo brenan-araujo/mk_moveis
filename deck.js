@@ -127,6 +127,7 @@
 
     moveBlobs(idx);
     animateCounters(slides[idx]);
+    if (typeof broadcastState === 'function') broadcastState();
 
     if (!fromHash) {
       try {
@@ -182,8 +183,133 @@
         e.preventDefault();
         toggleFullscreen();
         break;
+      case 'c':
+      case 'C':
+        e.preventDefault();
+        toggleQrModal();
+        break;
     }
   });
+
+  // =========================================================
+  // CONTROLE REMOTO VIA SMARTPHONE (PeerJS + QR Code)
+  // =========================================================
+  const remoteBtn = document.getElementById('remoteBtn');
+  const qrModal = document.getElementById('qrModal');
+  const qrClose = document.getElementById('qrClose');
+  const qrBox = document.getElementById('qrcode');
+  const qrStatus = document.getElementById('qrStatus');
+  const qrStatusText = document.getElementById('qrStatusText');
+  const qrLinkText = document.getElementById('qrLinkText');
+
+  let peer = null;
+  let activeConnections = [];
+  let qrCodeObj = null;
+
+  function toggleQrModal() {
+    if (!qrModal) return;
+    const isOpen = qrModal.classList.contains('open');
+    if (isOpen) {
+      qrModal.classList.remove('open');
+    } else {
+      qrModal.classList.add('open');
+      initRemoteHost();
+    }
+  }
+
+  if (remoteBtn) remoteBtn.addEventListener('click', toggleQrModal);
+  if (qrClose) qrClose.addEventListener('click', toggleQrModal);
+  if (qrModal) {
+    qrModal.addEventListener('click', (e) => {
+      if (e.target === qrModal) toggleQrModal();
+    });
+  }
+
+  function broadcastState() {
+    const payload = {
+      type: 'state',
+      current: current,
+      total: total,
+      title: slides[current] ? slides[current].dataset.title || '' : ''
+    };
+    activeConnections.forEach((conn) => {
+      if (conn && conn.open) {
+        try { conn.send(payload); } catch (_) {}
+      }
+    });
+  }
+
+  function initRemoteHost() {
+    if (peer && !peer.destroyed) return;
+
+    if (typeof Peer === 'undefined') {
+      if (qrStatusText) qrStatusText.textContent = 'Carregando biblioteca...';
+      return;
+    }
+
+    const roomId = 'mk-' + Math.random().toString(36).substring(2, 8);
+    peer = new Peer(roomId);
+
+    peer.on('open', (id) => {
+      // Monta a URL do controle remoto
+      const base = window.location.href.split('#')[0].replace('index.html', '').replace(/\/$/, '');
+      const remoteUrl = `${base}/remote.html?room=${id}`;
+      
+      if (qrLinkText) qrLinkText.textContent = remoteUrl;
+      if (qrStatusText) qrStatusText.textContent = 'Aguardando celular...';
+
+      if (qrBox) {
+        qrBox.innerHTML = '';
+        if (typeof QRCode !== 'undefined') {
+          qrCodeObj = new QRCode(qrBox, {
+            text: remoteUrl,
+            width: 218,
+            height: 218,
+            colorDark: '#0A1628',
+            colorLight: '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      }
+    });
+
+    peer.on('connection', (conn) => {
+      activeConnections.push(conn);
+      if (qrStatus) qrStatus.classList.add('connected');
+      if (qrStatusText) qrStatusText.textContent = '📱 Smartphone Conectado!';
+
+      conn.on('open', () => {
+        broadcastState();
+      });
+
+      conn.on('data', (data) => {
+        if (!data) return;
+        if (data.type === 'cmd') {
+          switch (data.action) {
+            case 'next': next(); break;
+            case 'prev': prev(); break;
+            case 'goto': if (typeof data.value === 'number') goTo(data.value); break;
+            case 'fullscreen': toggleFullscreen(); break;
+          }
+        } else if (data.type === 'sync') {
+          broadcastState();
+        }
+      });
+
+      conn.on('close', () => {
+        activeConnections = activeConnections.filter(c => c !== conn);
+        if (activeConnections.length === 0) {
+          if (qrStatus) qrStatus.classList.remove('connected');
+          if (qrStatusText) qrStatusText.textContent = 'Aguardando celular...';
+        }
+      });
+    });
+
+    peer.on('error', (err) => {
+      console.warn('Peer error:', err);
+      if (qrStatusText) qrStatusText.textContent = 'Erro ao conectar. Tente novamente.';
+    });
+  }
 
   // Roda do mouse com debounce suave
   window.addEventListener('wheel', (e) => {

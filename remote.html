@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Controle Remoto — MK Móveis</title>
+  <link rel="stylesheet" href="assets/fonts.css">
+  <script src="assets/peerjs.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #0A1628;
+      --bg-deep: #050C18;
+      --cyan: #00D4FF;
+      --white: #FFFFFF;
+      --gray: #D6DFEB;
+      --muted: #93A6C2;
+      --line: rgba(255, 255, 255, .12);
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--white);
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    /* Barra Superior */
+    header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10, 22, 40, .8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .brand svg { width: 22px; height: 22px; color: var(--cyan); }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .status-badge.connected {
+      background: rgba(0, 212, 255, .15);
+      border-color: rgba(0, 212, 255, .4);
+      color: var(--cyan);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #888;
+    }
+    .connected .status-dot {
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    /* Painel Central do Slide Atual */
+    .current-card {
+      margin: 16px 20px 0;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .02));
+      border: 1px solid rgba(255, 255, 255, .12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slide-num {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .slide-num b {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 38px;
+      color: var(--cyan);
+      line-height: 1;
+    }
+    .slide-num span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .slide-title-wrap {
+      text-align: right;
+      max-width: 60%;
+    }
+    .slide-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .slide-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    /* Área Principal de Controles */
+    .controls {
+      flex: 1;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .btn-nav-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 14px;
+      min-height: 220px;
+    }
+
+    .btn-nav {
+      border: 0;
+      border-radius: 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--white);
+      transition: transform .1s, background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-nav:active {
+      transform: scale(.96);
+    }
+
+    .btn-prev {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .15);
+      font-size: 18px;
+    }
+    .btn-prev svg {
+      width: 36px;
+      height: 36px;
+      stroke: var(--muted);
+      stroke-width: 2.2;
+    }
+
+    .btn-next {
+      background: linear-gradient(145deg, #00D4FF, #0088CC);
+      color: #04121F;
+      box-shadow: 0 10px 30px rgba(0, 212, 255, .35);
+      font-size: 22px;
+    }
+    .btn-next svg {
+      width: 48px;
+      height: 48px;
+      stroke: #04121F;
+      stroke-width: 2.6;
+    }
+
+    /* Ações Secundárias */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-sub {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--line);
+      color: var(--gray);
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .btn-sub:active {
+      background: rgba(255, 255, 255, .1);
+      transform: scale(.98);
+    }
+    .btn-sub svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+
+    /* Barra de Progresso no Rodapé */
+    .track {
+      height: 6px;
+      background: rgba(255, 255, 255, .08);
+      position: relative;
+    }
+    .track-fill {
+      height: 100%;
+      width: 8.33%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      transition: width .3s;
+    }
+
+    /* Modal / Toast de Reconexão */
+    .toast {
+      position: fixed;
+      top: 70px;
+      left: 20px;
+      right: 20px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(240, 50, 50, .9);
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 36 36" fill="none">
+        <path d="M18 3 32 11v14L18 33 4 25V11L18 3Z" stroke="currentColor" stroke-width="2.2"/>
+        <path d="M4 11 18 19l14-8M18 19v14" stroke="currentColor" stroke-width="2.2"/>
+      </svg>
+      <span>MK Móveis</span>
+    </div>
+    <div class="status-badge" id="statusBadge">
+      <div class="status-dot"></div>
+      <span id="statusTxt">Conectando...</span>
+    </div>
+  </header>
+
+  <div class="toast" id="toast">Aguardando conexão com a apresentação no computador...</div>
+
+  <div class="current-card">
+    <div class="slide-num">
+      <b id="cNum">01</b>
+      <span id="cTotal">/ 12</span>
+    </div>
+    <div class="slide-title-wrap">
+      <div class="slide-label">Slide Atual</div>
+      <div class="slide-title" id="cTitle">Capa</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="btn-nav-grid">
+      <button class="btn-nav btn-prev" id="btnPrev" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Voltar</span>
+      </button>
+
+      <button class="btn-nav btn-next" id="btnNext" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Avançar</span>
+      </button>
+    </div>
+
+    <div class="actions-grid">
+      <button class="btn-sub" id="btnHome" type="button">
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Início (Capa)</span>
+      </button>
+
+      <button class="btn-sub" id="btnFs" type="button">
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        <span>Tela Cheia</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="track">
+    <div class="track-fill" id="trackFill"></div>
+  </div>
+
+  <script>
+    (() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const roomId = urlParams.get('room');
+      
+      const statusBadge = document.getElementById('statusBadge');
+      const statusTxt = document.getElementById('statusTxt');
+      const toast = document.getElementById('toast');
+      const cNum = document.getElementById('cNum');
+      const cTotal = document.getElementById('cTotal');
+      const cTitle = document.getElementById('cTitle');
+      const trackFill = document.getElementById('trackFill');
+
+      const btnNext = document.getElementById('btnNext');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnHome = document.getElementById('btnHome');
+      const btnFs = document.getElementById('btnFs');
+
+      if (!roomId) {
+        statusTxt.textContent = 'Sem código';
+        toast.textContent = 'Erro: Código da apresentação não encontrado na URL!';
+        toast.style.display = 'block';
+        return;
+      }
+
+      function vibrate() {
+        if (navigator.vibrate) navigator.vibrate(40);
+      }
+
+      // Conexão PeerJS
+      const peer = new Peer();
+      let conn = null;
+
+      peer.on('open', (id) => {
+        statusTxt.textContent = 'Localizando...';
+        conn = peer.connect(roomId, { reliable: true });
+
+        conn.on('open', () => {
+          statusBadge.classList.add('connected');
+          statusTxt.textContent = 'Conectado';
+          toast.style.display = 'none';
+          vibrate();
+          // Pede estado atual do slide
+          conn.send({ type: 'sync' });
+        });
+
+        conn.on('data', (data) => {
+          if (data && data.type === 'state') {
+            cNum.textContent = String(data.current + 1).padStart(2, '0');
+            cTotal.textContent = `/ ${String(data.total).padStart(2, '0')}`;
+            cTitle.textContent = data.title || 'Slide';
+            trackFill.style.width = `${((data.current + 1) / data.total) * 100}%`;
+          }
+        });
+
+        conn.on('close', () => {
+          statusBadge.classList.remove('connected');
+          statusTxt.textContent = 'Desconectado';
+          toast.textContent = 'Conexão perdida com a apresentação.';
+          toast.style.display = 'block';
+        });
+
+        conn.on('error', () => {
+          statusBadge.classList.remove('connected');
+          statusTxt.textContent = 'Erro';
+        });
+      });
+
+      function sendCmd(action, value) {
+        vibrate();
+        if (conn && conn.open) {
+          conn.send({ type: 'cmd', action, value });
+        } else {
+          toast.textContent = 'Não conectado à tela. Tentando reconectar...';
+          toast.style.display = 'block';
+        }
+      }
+
+      btnNext.addEventListener('click', () => sendCmd('next'));
+      btnPrev.addEventListener('click', () => sendCmd('prev'));
+      btnHome.addEventListener('click', () => sendCmd('goto', 0));
+      btnFs.addEventListener('click', () => sendCmd('fullscreen'));
+
+      // Previne zoom duplo toque no iOS
+      document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+    })();
+  </script>
+</body>
+</html>

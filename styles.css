@@ -694,3 +694,96 @@ body::after { /* fade cinematográfico de abertura */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .2s !important; transition-delay: 0s !important; }
 }
+
+/* =========================================================
+   MODAL QR CODE · CONTROLE VIA SMARTPHONE
+   ========================================================= */
+.qr-modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(4, 10, 20, .85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .35s ease;
+}
+.qr-modal-overlay.open {
+  opacity: 1; pointer-events: auto;
+}
+
+.qr-modal {
+  position: relative;
+  width: 520px; padding: 46px 42px 42px;
+  text-align: center;
+  background: linear-gradient(145deg, rgba(16, 36, 68, .95), rgba(8, 18, 36, .98));
+  border: 1px solid rgba(0, 212, 255, .4);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, .8), 0 0 60px -10px rgba(0, 212, 255, .3);
+  border-radius: 32px;
+  transform: scale(.92);
+  transition: transform .4s var(--ease);
+}
+.qr-modal-overlay.open .qr-modal {
+  transform: scale(1);
+}
+
+.qr-close {
+  position: absolute; right: 24px; top: 24px;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--line); background: rgba(255, 255, 255, .06);
+  color: var(--white); font-size: 20px; cursor: pointer;
+  display: grid; place-items: center;
+  transition: background .2s, border-color .2s;
+}
+.qr-close:hover {
+  background: rgba(255, 255, 255, .15);
+  border-color: var(--cyan);
+}
+
+.qr-tag {
+  display: inline-block;
+  font-family: var(--f-mono); font-size: 15px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 12px;
+}
+.qr-modal h3 {
+  font-family: var(--f-display); font-size: 32px; font-weight: 800; letter-spacing: -.02em;
+}
+.qr-modal p {
+  font-size: 18px; color: var(--muted); margin-top: 10px; line-height: 1.4;
+}
+
+.qr-box {
+  width: 250px; height: 250px; margin: 28px auto 22px;
+  padding: 16px; border-radius: 20px;
+  background: #FFFFFF;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 35px rgba(0, 212, 255, .35);
+}
+.qr-box img {
+  display: block; width: 100% !important; height: 100% !important;
+}
+
+.qr-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 15px; color: var(--gray);
+  padding: 8px 18px; border-radius: 999px;
+  background: rgba(255, 255, 255, .05); border: 1px solid var(--line);
+}
+.qr-status.connected {
+  border-color: rgba(0, 212, 255, .6);
+  color: var(--cyan);
+  background: rgba(0, 212, 255, .1);
+}
+.qr-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #888;
+}
+.qr-status.connected .qr-dot {
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.qr-link-copy {
+  margin-top: 16px;
+  font-family: var(--f-mono); font-size: 13px; color: var(--muted);
+  word-break: break-all;
+}
+

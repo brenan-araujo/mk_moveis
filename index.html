@@ -116,6 +116,10 @@
     <symbol id="i-full" viewBox="0 0 24 24">
       <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
     </symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24">
+      <rect x="6" y="2.5" width="12" height="19" rx="3"/>
+      <path d="M11 18h2M9 5h6"/>
+    </symbol>
   </svg>
 
   <!-- ================= FUNDO CINEMATOGRÁFICO ================= -->
@@ -999,17 +1003,45 @@
       <div class="nav">
         <button id="prevBtn" type="button" title="Slide anterior (←)" aria-label="Slide anterior">←</button>
         <button id="nextBtn" type="button" title="Próximo slide (→)" aria-label="Próximo slide">→</button>
+        <button id="remoteBtn" type="button" title="Controle via Smartphone" aria-label="Abrir controle remoto via smartphone">
+          <svg class="ic"><use href="#i-phone"/></svg>
+        </button>
         <button id="fsBtn" type="button" title="Tela cheia (F)" aria-label="Alternar tela cheia">
           <svg class="ic"><use href="#i-full"/></svg>
         </button>
       </div>
     </footer>
 
+    <!-- Modal do QR Code para Controle Remoto -->
+    <div class="qr-modal-overlay" id="qrModal" aria-hidden="true">
+      <div class="glass qr-modal">
+        <button class="qr-close" id="qrClose" type="button" aria-label="Fechar">✕</button>
+        <div class="qr-tag">Controle Remoto</div>
+        <h3>Controle pelo Smartphone</h3>
+        <p>Aponte a câmera do seu celular para o QR Code abaixo para navegar pelos slides remotamente.</p>
+        
+        <div class="qr-box">
+          <div id="qrcode"></div>
+        </div>
+
+        <div class="qr-status" id="qrStatus">
+          <span class="qr-dot"></span>
+          <span id="qrStatusText">Aguardando conexão...</span>
+        </div>
+
+        <div class="qr-link-copy">
+          <span id="qrLinkText">Carregando link...</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Barra de progresso -->
     <div class="progress"><span id="progBar"></span></div>
 
   </main>
 
+  <script src="assets/peerjs.min.js"></script>
+  <script src="assets/qrcode.min.js"></script>
   <script src="deck.js"></script>
 </body>
 </html>
