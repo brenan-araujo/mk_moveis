@@ -528,7 +528,7 @@ body::after { /* fade cinematográfico de abertura */
    07 · BANCO DE DADOS (DER)
    ========================================================= */
 .der { position: relative; height: 560px; margin-top: 44px; }
-.der .links { position: absolute; left: 0; top: 0; width: 1680px; height: 560px; overflow: visible; }
+.der .links { position: absolute; left: 0; top: 0; width: 1680px; height: 560px; overflow: visible; z-index: 1; pointer-events: none; }
 .link { fill: none; stroke: rgba(0, 212, 255, .55); stroke-width: 2.5; stroke-linejoin: round; }
 .link-flow { fill: none; stroke: #9BF0FF; stroke-width: 3; stroke-linecap: round; stroke-dasharray: .012 .05; opacity: 0; transition: opacity .3s; animation: flow 7s linear infinite; }
 .active .link-flow { opacity: .9; transition: opacity 1s ease 2.2s; }
@@ -536,7 +536,7 @@ body::after { /* fade cinematográfico de abertura */
 .card-badge circle { fill: #0A1628; stroke: var(--cyan); stroke-width: 2; }
 .card-badge text { font-family: var(--f-num); font-size: 16px; font-weight: 700; fill: var(--cyan); text-anchor: middle; dominant-baseline: central; }
 
-.der .glass { position: absolute; border-radius: 22px; }
+.der .glass { position: absolute; border-radius: 22px; z-index: 2; }
 .ent header {
   height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 24px;
   font-family: var(--f-display); font-weight: 700; font-size: 28px; letter-spacing: -.01em;
