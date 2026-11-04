@@ -194,7 +194,7 @@ body::after { /* fade cinematográfico de abertura */
 }
 
 /* Revelação escalonada (stagger) */
-.rv, .rv-scale, .rv-left, .rv-right, .pop {
+.rv, .rv-scale, .rv-left, .rv-right {
   opacity: 0;
   transition: opacity .35s ease, transform .45s ease;
 }
@@ -202,13 +202,21 @@ body::after { /* fade cinematográfico de abertura */
 .rv-scale { transform: translate3d(0, 30px, 0) scale(.92); }
 .rv-left  { transform: translate3d(-70px, 0, 0); }
 .rv-right { transform: translate3d(70px, 0, 0); }
-.pop      { transform: scale(.8); transform-box: fill-box; transform-origin: center; }
 
-.active :is(.rv, .rv-scale, .rv-left, .rv-right, .pop) {
+.pop {
+  opacity: 0;
+  transition: opacity .8s var(--ease) calc(var(--i, 0) * 95ms + 380ms);
+}
+
+.active :is(.rv, .rv-scale, .rv-left, .rv-right) {
   opacity: 1; transform: none;
   transition:
     opacity 1s var(--ease) calc(var(--i, 0) * 95ms + 380ms),
     transform 1.25s var(--ease) calc(var(--i, 0) * 95ms + 380ms);
+}
+
+.active .pop {
+  opacity: 1;
 }
 
 /* Títulos com máscara */
